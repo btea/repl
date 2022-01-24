@@ -57,6 +57,11 @@ function horizontalScroll(e: WheelEvent) {
     left: el.scrollLeft + distance
   })
 }
+
+const switchActiveFile = (file: string) => {
+  store.state.activeFile.code = store.state.editor?.getValue() || ''
+  store.setActive(file)
+}
 </script>
 
 <template>
@@ -65,7 +70,7 @@ function horizontalScroll(e: WheelEvent) {
       v-for="(file, i) in files"
       class="file"
       :class="{ active: store.state.activeFile.filename === file }"
-      @click="store.setActive(file)"
+      @click="switchActiveFile(file)"
     >
       <span class="label">{{
         file === importMapFile ? 'Import Map' : file

@@ -8,6 +8,7 @@ import {
   SFCTemplateCompileOptions
 } from 'vue/compiler-sfc'
 import { OutputModes } from './output/types'
+import CodeMirror from './codemirror/codemirror'
 
 const defaultMainFile = 'App.vue'
 
@@ -47,6 +48,7 @@ export interface StoreState {
   activeFile: File
   errors: (string | Error)[]
   vueRuntimeURL: string
+  editor: CodeMirror.Editor | null
 }
 
 export interface SFCOptions {
@@ -60,6 +62,7 @@ export interface Store {
   options?: SFCOptions
   compiler: typeof import('vue/compiler-sfc')
   setActive: (filename: string) => void
+  setEditor: (editor: CodeMirror.Editor) => void
   addFile: (filename: string | File) => void
   deleteFile: (filename: string) => void
   getImportMap: () => any
@@ -115,7 +118,8 @@ export class ReplStore implements Store {
       files,
       activeFile: files[mainFile],
       errors: [],
-      vueRuntimeURL: this.defaultVueRuntimeURL
+      vueRuntimeURL: this.defaultVueRuntimeURL,
+      editor: null
     })
 
     this.initImportMap()
@@ -131,6 +135,10 @@ export class ReplStore implements Store {
 
   setActive(filename: string) {
     this.state.activeFile = this.state.files[filename]
+  }
+
+  setEditor(editor: CodeMirror.Editor) {
+    this.state.editor = editor
   }
 
   addFile(fileOrFilename: string | File): void {

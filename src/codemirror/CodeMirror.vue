@@ -6,6 +6,8 @@
 import { ref, onMounted, watchEffect, inject } from 'vue'
 import { debounce } from '../utils'
 import CodeMirror from './codemirror'
+import { Store } from '../store'
+const store = inject('store') as Store
 
 interface Props {
   mode?: string
@@ -19,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
   readonly: false
 })
 
-const emit = defineEmits<(e: 'change', value: string) => void>()
+const emit = defineEmits<(e: 'save', value: string) => void>()
 
 const el = ref()
 const needAutoResize = inject('autoresize')
@@ -41,9 +43,12 @@ onMounted(() => {
     lineNumbers: true,
     ...addonOptions
   })
-
-  editor.on('change', () => {
-    emit('change', editor.getValue())
+  store.setEditor(editor)
+  el.value.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.ctrlKey && e.key === 's') {
+      e.preventDefault()
+      emit('save', editor.getValue())
+    }
   })
 
   watchEffect(() => {

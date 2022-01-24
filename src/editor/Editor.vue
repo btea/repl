@@ -2,15 +2,14 @@
 import FileSelector from './FileSelector.vue'
 import CodeMirror from '../codemirror/CodeMirror.vue'
 import Message from '../Message.vue'
-import { debounce } from '../utils'
 import { computed, inject } from 'vue'
 import { Store } from '../store'
 
 const store = inject('store') as Store
 
-const onChange = debounce((code: string) => {
+const onSave = (code: string) => {
   store.state.activeFile.code = code
-}, 250)
+}
 
 const activeMode = computed(() => {
   const { filename } = store.state.activeFile
@@ -26,7 +25,7 @@ const activeMode = computed(() => {
   <FileSelector />
   <div class="editor-container">
     <CodeMirror
-      @change="onChange"
+      @save="onSave"
       :value="store.state.activeFile.code"
       :mode="activeMode"
     />
